@@ -1,15 +1,15 @@
 <?php
 
 /**
- * ellak - Edu_fos query handler.
+ * ellak - Edu_quest query handler.
  *
  * @package     none
  * @author      David Bromoiras
- * @copyright   2016 eellak
+ * @copyright   2018 eellak
  * @license     GPL-2.0+
  *
  * @wordpress-plugin
- * Plugin Name: Edu_fos query handler.
+ * Plugin Name: Edu_quest query handler.
  * Plugin URI:  
  * Description: .
  * Version:     1.0
