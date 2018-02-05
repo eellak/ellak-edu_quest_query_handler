@@ -10,8 +10,8 @@
  *
  * @wordpress-plugin
  * Plugin Name: Edu_quest query handler.
- * Plugin URI:  
- * Description: .
+ * Plugin URI:  https://github.com/eellak/ellak-edu_quest_query_handler
+ * Description: This plugin implements the post request handling that comes from submitting the filter form terms in the questionary page.
  * Version:     1.0
  * Author:      David Bromoiras
  * Author URI:  https://www.anchor-web.gr
@@ -21,15 +21,16 @@
  **/
 if(! function_exists('ellak_edu_quest_query_handler')){
 	function ellak_edu_quest_query_handler(){
-			$institution=filter_input(INPUT_POST, $_POST['thematiki'], FILTER_SANITIZE_SPECIAL_CHARS);
-			$department=filter_input(INPUT_POST, $_POST['antikimeno'], FILTER_SANITIZE_SPECIAL_CHARS);
-			$course=filter_input(INPUT_POST, $_POST['vathmida'], FILTER_SANITIZE_SPECIAL_CHARS);
+			$institution=filter_input(INPUT_POST, 'institution', FILTER_SANITIZE_SPECIAL_CHARS);
+			$department=filter_input(INPUT_POST, 'department', FILTER_SANITIZE_SPECIAL_CHARS);
+			$course=filter_input(INPUT_POST, 'course', FILTER_SANITIZE_SPECIAL_CHARS);
 
-			$institution=$_POST['thematiki'];
-			$department=$_POST['antikimeno'];
-			$course=$_POST['vathmida'];
+//			$institution=$_POST['institution'];
+//			$department=$_POST['department'];
+//			$course=$_POST['course'];
 
 			wp_redirect(get_bloginfo()->url."/edu_quest_post_type/?institution=$institution&department=$department&course=$course");
+//			error_log('1-2');
 	}
 }
 add_action('admin_post_handle_edu_quest_query', 'ellak_edu_quest_query_handler');
@@ -38,7 +39,7 @@ add_action('admin_post_nopriv_handle_edu_quest_query', 'ellak_edu_quest_query_ha
 if(! function_exists('filter_quest_query_by_fields')){
 	function filter_quest_query_by_fields($query){
 			if($query->is_main_query() && is_post_type_archive('edu_quest_post_type')){
-					$tax_query=array('relation'=>'AND',);
+					$tax_query=array('relation'=>'AND');
 
 					if (isset($_GET['institution'])){
 							$institution=$_GET['institution'];
@@ -46,22 +47,22 @@ if(! function_exists('filter_quest_query_by_fields')){
 								
 								array_push(
 												$tax_query,
-												array('institution_clause' => array(
-														'meta_key'=>'edu_quest_institution',
-														'meta_value'=>$institution
-												)
+												array(
+														'key'=>'edu_quest_institution',
+														'value'=>$institution
 										));
 							}
 					}
 
 					if (isset($_GET['department'])){
 							$department=$_GET['department'];
+//							echo $department;
 							if($department!=='null_option'){
 									array_push(
 													$tax_query,
 													array(
-													'meta_key'=>'edu_quest_department',
-													'meta_value'=>$department
+													'key'=>'edu_quest_department',
+													'value'=>$department
 											));
 							}
 					}
@@ -72,15 +73,16 @@ if(! function_exists('filter_quest_query_by_fields')){
 									array_push(
 													$tax_query,
 													array(
-													'meta_key'=>'edu_quest_course',
-													'meta_value'=>$course
+													'key'=>'edu_quest_course',
+													'value'=>$course
 											));
 							}
 					}
 					$query->set('orderby', 'title');
 					$query->set('order', 'ASC');
+					$query->set('posts_per_page', '30');
 					$query->set('post_type', 'edu_quest_post_type');
-					$query->set('tax_query', $tax_query);
+					$query->set('meta_query', $tax_query);
 			}
 	}
 }
